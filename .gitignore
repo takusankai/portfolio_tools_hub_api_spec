@@ -1,0 +1,13 @@
+# IDE/エディタファイル
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS固有
+.DS_Store
+Thumbs.db
+
+# その他
+node_modules/
+*.log
