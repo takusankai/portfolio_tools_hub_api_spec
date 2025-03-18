@@ -1,0 +1,187 @@
+openapi: 3.1.0
+info:
+  title: Portfolio Tools Hub API
+  version: 1.0.0
+  description: API for Portfolio Tools Hub
+servers:
+  - url: https://api.example.com/v1
+    description: 本番環境
+  - url: https://localhost:3000/v1
+    description: 開発環境
+tags:
+  - name: general
+    description: 一般的なエンドポイント
+  - name: user
+    description: ユーザー関連のエンドポイント
+paths:
+  /:
+    get:
+      summary: ルートエンドポイント
+      description: シンプルなメッセージを返すルートエンドポイント
+      operationId: getRoot
+      tags:
+        - general
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: here is api
+                required:
+                  - message
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /users:
+    get:
+      summary: ユーザーリスト取得
+      description: システムに登録されているユーザーのリストを返します
+      operationId: getUserList
+      tags:
+        - user
+      responses:
+        '200':
+          description: 正常応答
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/users_User'
+                required:
+                  - users
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  schemas:
+    RootMessage:
+      allOf:
+        - $ref: '#/components/schemas/Message'
+    User:
+      allOf:
+        - $ref: '#/components/schemas/users_User'
+    users_User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ユーザーID
+        username:
+          type: string
+          description: ユーザー名
+        email:
+          type: string
+          format: email
+          description: メールアドレス
+      required:
+        - id
+        - username
+        - email
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+          description: レスポンスメッセージ
+      required:
+        - message
+  responses:
+    BadRequest:
+      description: リクエストの形式が不正です
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+              details:
+                type: array
+                description: バリデーションエラーの詳細
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: エラーのあるフィールド名
+                    message:
+                      type: string
+                      description: 具体的なエラー内容
+            required:
+              - error
+    Unauthorized:
+      description: 認証が必要です
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: 認証が必要です
+            required:
+              - error
+    Forbidden:
+      description: このリソースにアクセスする権限がありません
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: アクセス権限がありません
+            required:
+              - error
+    NotFound:
+      description: リクエストされたリソースが見つかりません
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: リソースが見つかりません
+            required:
+              - error
+    InternalServerError:
+      description: サーバー内部でエラーが発生しました
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: 内部サーバーエラーが発生しました
+            required:
+              - error
