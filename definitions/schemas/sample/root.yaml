@@ -1,8 +1,0 @@
-Message:
-  type: object
-  properties:
-    message:
-      type: string
-      description: レスポンスメッセージ
-  required:
-    - message

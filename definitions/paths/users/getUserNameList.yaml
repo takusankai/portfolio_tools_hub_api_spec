@@ -1,0 +1,38 @@
+get:
+  summary: ユーザー名リスト取得
+  description: ユーザー名リストを取得するエンドポイント
+  operationId: getUserNameList
+  tags:
+    - users
+  parameters:
+    - $ref: '../../schemas/users/getUserNameList.yaml#/getUserNameListRequest'
+  responses:
+    '200':
+      description: 正常応答
+      content:
+        application/json:
+          schema:
+            $ref: '../../schemas/users/getUserNameList.yaml#/getUserNameListResponse'
+          examples:
+            default:
+              value:
+                userNameList:
+                  - "user1"
+                  - "user2"
+                  - "user3"
+                total: 12
+    '400':
+      description: 汎用 BadRequest
+      $ref: '../../responses.yaml#/BadRequest'
+    '401':
+      description: 汎用 Unauthorized
+      $ref: '../../responses.yaml#/Unauthorized'
+    '403':
+      description: 汎用 Forbidden
+      $ref: '../../responses.yaml#/Forbidden'
+    '404':
+      description: 汎用 NotFound
+      $ref: '../../responses.yaml#/NotFound'
+    '500':
+      description: 汎用 InternalServerError
+      $ref: '../../responses.yaml#/InternalServerError'

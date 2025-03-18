@@ -1,7 +1,7 @@
 .PHONY: bundle gen-go gen-go-chi
 
 bundle:
-	redocly bundle main.yaml -o bundled.yaml
+	redocly bundle definitions/main.yaml -o bundled.yaml
 
 # バンドル済みYAMLからGoのAPIコードを生成
 gen-go:
