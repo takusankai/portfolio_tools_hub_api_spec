@@ -3,6 +3,4 @@ generate:
   models: true
   embedded-spec: true
   chi-server: true
-output: ../app/gen_api/api.go
-import-mapping:
-  ../../../definitions/responses.yaml: github.com/takusankai/portfolio_tools_hub_backend/app/gen_api/responses
+output: ../app/gen/api.go

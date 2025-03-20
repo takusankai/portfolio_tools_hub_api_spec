@@ -6,4 +6,4 @@ bundle:
 # CHIベースのgolangバックエンドAPIコード自動生成
 gen-go:
 	@oapi-codegen -config chi_config.yaml \
-		bundled.yaml > ../app/gen_api/api.go
+		bundled.yaml > ../app/gen/api.go
