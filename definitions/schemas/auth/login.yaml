@@ -1,4 +1,4 @@
-loginResponse:
+loginRequest:
   name: sampleQuery
   in: query
   description: サンプルクエリ
@@ -7,7 +7,7 @@ loginResponse:
     type: string
     example: "sample query"
 
-loginRequest:
+loginResponse:
   type: object
   required:
     - simpleMessage
