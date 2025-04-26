@@ -4,9 +4,9 @@ info:
   version: 1.0.0
   description: API for Portfolio Tools Hub
 servers:
-  - url: https://api.example.com/v1
+  - url: https://api.example.com
     description: 本番環境
-  - url: https://localhost:3000/v1
+  - url: https://localhost:3000
     description: 開発環境
 
 paths:
@@ -14,6 +14,10 @@ paths:
     $ref: './paths/general/checkRoot.yaml'
   /signUp:
     $ref: './paths/auth/signUp.yaml'
+  /login:
+    $ref: './paths/auth/login.yaml'
+  /logout:
+    $ref: './paths/auth/logout.yaml'
   /userIdList:
     $ref: './paths/users/getUserIdList.yaml'
   /userNameList:
@@ -27,6 +31,12 @@ components:
     signUp:
       allOf:
         - $ref: './schemas/auth/signUp.yaml#/signUpResponse'
+    logIn:
+      allOf:
+        - $ref: './schemas/auth/login.yaml#/loginResponse'
+    logOut:
+      allOf:
+        - $ref: './schemas/auth/logout.yaml#/logoutResponse'
     userIdList:
       allOf:
         - $ref: './schemas/users/getUserIdList.yaml#/getUserIdListResponse'
@@ -39,6 +49,10 @@ components:
       $ref: './schemas/general/checkRoot.yaml#/checkRootRequest'
     signUpRequest:
       $ref: './schemas/auth/signUp.yaml#/signUpRequest'
+    loginRequest:
+      $ref: './schemas/auth/login.yaml#/loginRequest'
+    logoutRequest:
+      $ref: './schemas/auth/logout.yaml#/logoutRequest'
     getUserIdListRequest:
       $ref: './schemas/users/getUserIdList.yaml#/getUserIdListRequest'
     getUserNameListRequest:
