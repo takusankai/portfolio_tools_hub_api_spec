@@ -1,41 +1,24 @@
-get:
-  summary: ユーザーのサインアップ
-  description: ユーザーのサインアップを行うエンドポイント
-  operationId: signUp
+post:
   tags:
     - auth
-  parameters:
-    - $ref: '../../schemas/auth/signUp.yaml#/signUpRequest'
+  summary: ユーザー登録
+  description: |
+    新規ユーザーをSupabase認証サービスに登録します。
+    登録成功時にはユーザー情報とセッション情報を返します。
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../operations/auth/signUp.yaml#/signUpRequest'
   responses:
     '200':
-      description: 正常応答
+      description: 登録成功
       content:
         application/json:
           schema:
-            $ref: '../../schemas/auth/signUp.yaml#/signUpResponse'
-          examples:
-            withQuery:
-              value:
-                simpleMessage: "signUp is developing now"
-                echoQuery: "hello world"
-                timestamp: "2023-07-01T12:00:00Z"
-            withoutQuery:
-              value:
-                simpleMessage: "signUp is developing now"
-                echoQuery: null
-                timestamp: "2023-07-01T12:00:00Z"
-    '400':
-      description: 汎用 BadRequest
-      $ref: '../../responses.yaml#/BadRequest'
-    '401':
-      description: 汎用 Unauthorized
-      $ref: '../../responses.yaml#/Unauthorized'
-    '403':
-      description: 汎用 Forbidden
-      $ref: '../../responses.yaml#/Forbidden'
-    '404':
-      description: 汎用 NotFound
-      $ref: '../../responses.yaml#/NotFound'
+            $ref: '../../operations/auth/signUp.yaml#/signUpResponse'
     '500':
       description: 汎用 InternalServerError
-      $ref: '../../responses.yaml#/InternalServerError'
+      $ref: '../../main.yaml#/components/responses/InternalServerError'
+  security: []

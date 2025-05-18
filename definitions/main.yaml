@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Portfolio Tools Hub API
   version: 1.0.0
@@ -12,63 +12,115 @@ servers:
 paths:
   /:
     $ref: './paths/general/checkRoot.yaml'
-  /signUp:
+  /auth/signup:
     $ref: './paths/auth/signUp.yaml'
-  /login:
+  /auth/login:
     $ref: './paths/auth/login.yaml'
-  /logout:
+  /auth/logout:
     $ref: './paths/auth/logout.yaml'
+  /auth/refresh:
+    $ref: './paths/auth/refreshToken.yaml'
+  /auth/resetPassword:
+    $ref: './paths/auth/resetPassword.yaml'
+  /auth/oauth/github:
+    $ref: './paths/auth/oauth/github.yaml'
+  /auth/oauth/google:
+    $ref: './paths/auth/oauth/google.yaml'
   /userIdList:
     $ref: './paths/users/getUserIdList.yaml'
   /userNameList:
     $ref: './paths/users/getUserNameList.yaml'
 
 components:
-  schemas:
-    rootMessageResponse:
-      allOf:
-        - $ref: './schemas/general/checkRoot.yaml#/checkRootResponse'
-    signUp:
-      allOf:
-        - $ref: './schemas/auth/signUp.yaml#/signUpResponse'
-    logIn:
-      allOf:
-        - $ref: './schemas/auth/login.yaml#/loginResponse'
-    logOut:
-      allOf:
-        - $ref: './schemas/auth/logout.yaml#/logoutResponse'
-    userIdList:
-      allOf:
-        - $ref: './schemas/users/getUserIdList.yaml#/getUserIdListResponse'
-    userNameList:
-      allOf:
-        - $ref: './schemas/users/getUserNameList.yaml#/getUserNameListResponse'
-  
-  parameters:
-    checkRootRequest:
-      $ref: './schemas/general/checkRoot.yaml#/checkRootRequest'
-    signUpRequest:
-      $ref: './schemas/auth/signUp.yaml#/signUpRequest'
-    loginRequest:
-      $ref: './schemas/auth/login.yaml#/loginRequest'
-    logoutRequest:
-      $ref: './schemas/auth/logout.yaml#/logoutRequest'
-    getUserIdListRequest:
-      $ref: './schemas/users/getUserIdList.yaml#/getUserIdListRequest'
-    getUserNameListRequest:
-      $ref: './schemas/users/getUserNameList.yaml#/getUserNameListRequest'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabaseが提供するJWTトークンを使用した認証
   
   responses:
+    # 400番
     BadRequest:
-      $ref: './responses.yaml#/BadRequest'
+      description: リクエストの形式が不正です
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+              details:
+                type: array
+                description: バリデーションエラーの詳細
+                items:
+                  type: object
+                  properties:
+                    field:
+                      type: string
+                      description: エラーのあるフィールド名
+                    message:
+                      type: string
+                      description: 具体的なエラー内容
+            required:
+              - error
+    # 401番
     Unauthorized:
-      $ref: './responses.yaml#/Unauthorized'
+      description: 認証が必要です
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: "認証が必要です"
+            required:
+              - error
+    # 403番
     Forbidden:
-      $ref: './responses.yaml#/Forbidden'
+      description: このリソースにアクセスする権限がありません
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: "アクセス権限がありません"
+            required:
+              - error
+    # 404番
     NotFound:
-      $ref: './responses.yaml#/NotFound'
+      description: リクエストされたリソースが見つかりません
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: "リソースが見つかりません"
+            required:
+              - error
+    # 500番
     InternalServerError:
-      $ref: './responses.yaml#/InternalServerError'
+      description: サーバー内部でエラーが発生しました
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: エラーメッセージ
+                example: "内部サーバーエラーが発生しました"
+            required:
+              - error
 
 tags:
   - name: general

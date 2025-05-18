@@ -1,11 +1,14 @@
 checkRootRequest:
-  name: sampleQuery
+  name: checkRootRequest
   in: query
-  description: サンプルクエリ
+  description: sampleのテスト用クエリ
   required: false
   schema:
-    type: string
-    example: "sample query"
+    type: object
+    properties:
+      sampleQuery:
+        type: string
+        description: サンプルクエリ
 
 checkRootResponse:
   type: object

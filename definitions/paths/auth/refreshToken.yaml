@@ -1,0 +1,23 @@
+post:
+  tags:
+    - auth
+  summary: アクセストークンの更新
+  description: |
+    リフレッシュトークンを使用して新しいアクセストークンを取得します。
+    セッション有効期限の延長に使用します。
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../../operations/auth/refreshToken.yaml#/refreshTokenRequest'
+  responses:
+    '200':
+      description: トークン更新成功
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/refreshToken.yaml#/refreshTokenResponse'
+    '500':
+      description: 汎用 InternalServerError
+      $ref: '../../main.yaml#/components/responses/InternalServerError'
+  security: [] 

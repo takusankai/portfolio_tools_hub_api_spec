@@ -1,0 +1,22 @@
+refreshTokenRequest:
+  type: object
+  required:
+    - refresh_token
+  properties:
+    refresh_token:
+      type: string
+      description: リフレッシュトークン
+
+refreshTokenResponse:
+  type: object
+  properties:
+    access_token:
+      type: string
+      description: 新しいJWTアクセストークン
+    refresh_token:
+      type: string
+      description: 新しいJWTリフレッシュトークン
+    expires_at:
+      type: integer
+      format: int64
+      description: トークンの有効期限（UNIXタイムスタンプ） 

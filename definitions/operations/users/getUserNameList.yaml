@@ -1,14 +1,14 @@
 getUserNameListRequest:
-  name: limit
+  name: getUserNameListRequest
   in: query
-  description: 取得するユーザー数の上限
-  required: false
+  description: ユーザー名リスト取得のためのパラメータ
+  required: true
   schema:
-    type: integer
-    minimum: 1
-    maximum: 100
-    default: 10
-    example: 20
+    type: object
+    properties:
+      limit:
+        type: integer
+        description: 取得するユーザー数の上限
 
 getUserNameListResponse:
   type: object

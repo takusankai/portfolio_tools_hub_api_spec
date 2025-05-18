@@ -1,0 +1,20 @@
+get:
+  tags:
+    - auth
+  summary: Google OAuth認証
+  description: |
+    Google OAuth認証のためのリダイレクトURLを提供します。
+    フロントエンドはこのURLにユーザーをリダイレクトし、Googleの認証画面を表示します。
+  parameters:
+    - $ref: '../../../operations/auth/oauth/google.yaml#/oauthGoogleParameters'
+  responses:
+    '200':
+      description: リダイレクト情報取得成功
+      content:
+        application/json:
+          schema:
+            $ref: '../../../operations/auth/oauth/google.yaml#/oauthGoogleResponse'
+    '500':
+      description: 汎用 InternalServerError
+      $ref: '../../../main.yaml#/components/responses/InternalServerError'
+  security: []

@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: Portfolio Tools Hub API
   version: 1.0.0
@@ -18,11 +18,11 @@ tags:
 paths:
   /:
     get:
+      tags:
+        - general
       summary: ルートエンドポイント
       description: APIの起動を確認するためのエンドポイント
       operationId: checkRoot
-      tags:
-        - general
       parameters:
         - $ref: '#/components/parameters/checkRootRequest'
       responses:
@@ -58,117 +58,172 @@ paths:
         '500':
           description: 汎用 InternalServerError
           $ref: '#/components/responses/InternalServerError'
-  /signUp:
-    get:
-      summary: ユーザーのサインアップ
-      description: ユーザーのサインアップを行うエンドポイント
-      operationId: signUp
+  /auth/signup:
+    post:
       tags:
         - auth
-      parameters:
-        - $ref: '#/components/parameters/signUpRequest'
+      summary: ユーザー登録
+      description: |
+        新規ユーザーをSupabase認証サービスに登録します。
+        登録成功時にはユーザー情報とセッション情報を返します。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/signUpRequest'
       responses:
         '200':
-          description: 正常応答
+          description: 登録成功
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/signUpResponse'
-              examples:
-                withQuery:
-                  value:
-                    simpleMessage: signUp is developing now
-                    echoQuery: hello world
-                    timestamp: '2023-07-01T12:00:00Z'
-                withoutQuery:
-                  value:
-                    simpleMessage: signUp is developing now
-                    echoQuery: null
-                    timestamp: '2023-07-01T12:00:00Z'
-        '400':
-          description: 汎用 BadRequest
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          description: 汎用 Unauthorized
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          description: 汎用 Forbidden
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          description: 汎用 NotFound
-          $ref: '#/components/responses/NotFound'
         '500':
           description: 汎用 InternalServerError
           $ref: '#/components/responses/InternalServerError'
-  /login:
-    get:
-      summary: ユーザーログイン
-      description: ユーザー認証情報を検証し、セッションを確立します
-      operationId: login
+      security: []
+  /auth/login:
+    post:
       tags:
         - auth
-      parameters:
-        - $ref: '#/components/parameters/loginRequest'
+      summary: ログイン
+      description: |
+        登録済みユーザーのSupabase認証サービスへのログイン。
+        ログイン成功時にはユーザー情報とセッション情報を返します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequestBody'
       responses:
         '200':
-          description: 正常応答
+          description: ログイン成功
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/loginResponse'
-        '400':
-          description: 汎用 BadRequest
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          description: 汎用 Unauthorized
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          description: 汎用 Forbidden
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          description: 汎用 NotFound
-          $ref: '#/components/responses/NotFound'
         '500':
           description: 汎用 InternalServerError
           $ref: '#/components/responses/InternalServerError'
-  /logout:
-    get:
-      summary: ユーザーログアウト
-      description: 現在のセッションを終了します
-      operationId: logout
+      security: []
+  /auth/logout:
+    post:
       tags:
         - auth
-      parameters:
-        - $ref: '#/components/parameters/logoutRequest'
+      summary: ログアウト
+      description: |
+        現在のセッションを終了し、ユーザーをログアウトします。
+        アクセストークンとリフレッシュトークンを無効化します。
       responses:
         '200':
-          description: 正常応答
+          description: ログアウト成功
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/logoutResponse'
-        '400':
-          description: 汎用 BadRequest
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          description: 汎用 Unauthorized
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          description: 汎用 Forbidden
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          description: 汎用 NotFound
-          $ref: '#/components/responses/NotFound'
         '500':
           description: 汎用 InternalServerError
           $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+  /auth/refresh:
+    post:
+      tags:
+        - auth
+      summary: アクセストークンの更新
+      description: |
+        リフレッシュトークンを使用して新しいアクセストークンを取得します。
+        セッション有効期限の延長に使用します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/refreshTokenRequest'
+      responses:
+        '200':
+          description: トークン更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/refreshTokenResponse'
+        '500':
+          description: 汎用 InternalServerError
+          $ref: '#/components/responses/InternalServerError'
+      security: []
+  /auth/resetPassword:
+    post:
+      tags:
+        - auth
+      summary: パスワードリセット
+      description: |
+        ユーザーのパスワードリセットを開始します。
+        指定されたメールアドレスにパスワードリセットリンクが送信されます。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPasswordRequest'
+      responses:
+        '200':
+          description: パスワードリセットメール送信成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resetPasswordResponse'
+        '500':
+          description: 汎用 InternalServerError
+          $ref: '#/components/responses/InternalServerError'
+      security: []
+  /auth/oauth/github:
+    get:
+      tags:
+        - auth
+      summary: GitHub OAuth認証
+      description: |
+        GitHub OAuth認証のためのリダイレクトURLを提供します。
+        フロントエンドはこのURLにユーザーをリダイレクトし、GitHubの認証画面を表示します。
+      parameters:
+        - $ref: '#/components/parameters/oauthGithubParameters'
+      responses:
+        '200':
+          description: リダイレクト情報取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauthGithubResponse'
+        '500':
+          description: 汎用 InternalServerError
+          $ref: '#/components/responses/InternalServerError'
+      security: []
+  /auth/oauth/google:
+    get:
+      tags:
+        - auth
+      summary: Google OAuth認証
+      description: |
+        Google OAuth認証のためのリダイレクトURLを提供します。
+        フロントエンドはこのURLにユーザーをリダイレクトし、Googleの認証画面を表示します。
+      parameters:
+        - $ref: '#/components/parameters/oauthGoogleParameters'
+      responses:
+        '200':
+          description: リダイレクト情報取得成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/oauthGoogleResponse'
+        '500':
+          description: 汎用 InternalServerError
+          $ref: '#/components/responses/InternalServerError'
+      security: []
   /userIdList:
     get:
+      tags:
+        - users
       summary: ユーザーIDリスト取得
       description: ユーザーIDリストを取得するエンドポイント
       operationId: getUserIdList
-      tags:
-        - users
       parameters:
         - $ref: '#/components/parameters/getUserIdListRequest'
       responses:
@@ -178,14 +233,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getUserIdListResponse'
-              examples:
-                default:
-                  value:
-                    userIdList:
-                      - user1
-                      - user2
-                      - user3
-                    total: 12
         '400':
           description: 汎用 BadRequest
           $ref: '#/components/responses/BadRequest'
@@ -203,11 +250,11 @@ paths:
           $ref: '#/components/responses/InternalServerError'
   /userNameList:
     get:
+      tags:
+        - users
       summary: ユーザー名リスト取得
       description: ユーザー名リストを取得するエンドポイント
       operationId: getUserNameList
-      tags:
-        - users
       parameters:
         - $ref: '#/components/parameters/getUserNameListRequest'
       responses:
@@ -217,14 +264,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getUserNameListResponse'
-              examples:
-                default:
-                  value:
-                    userNameList:
-                      - user1
-                      - user2
-                      - user3
-                    total: 12
         '400':
           description: 汎用 BadRequest
           $ref: '#/components/responses/BadRequest'
@@ -241,196 +280,12 @@ paths:
           description: 汎用 InternalServerError
           $ref: '#/components/responses/InternalServerError'
 components:
-  schemas:
-    rootMessageResponse:
-      allOf:
-        - $ref: '#/components/schemas/checkRootResponse'
-    signUp:
-      allOf:
-        - $ref: '#/components/schemas/signUpResponse'
-    logIn:
-      allOf:
-        - $ref: '#/components/schemas/loginResponse'
-    logOut:
-      allOf:
-        - $ref: '#/components/schemas/logoutResponse'
-    userIdList:
-      allOf:
-        - $ref: '#/components/schemas/getUserIdListResponse'
-    userNameList:
-      allOf:
-        - $ref: '#/components/schemas/getUserNameListResponse'
-    checkRootResponse:
-      type: object
-      required:
-        - simpleMessage
-        - echoQuery
-        - timestamp
-      properties:
-        simpleMessage:
-          type: string
-          description: シンプルなメッセージ
-          example: API is running correctly
-        echoQuery:
-          type: string
-          description: クエリのエコー
-          example: sample query
-        timestamp:
-          type: string
-          format: date-time
-          description: レスポンスタイムスタンプ
-          example: '2023-07-01T12:00:00Z'
-    signUpResponse:
-      type: object
-      required:
-        - simpleMessage
-        - echoQuery
-        - timestamp
-      properties:
-        simpleMessage:
-          type: string
-          description: シンプルなメッセージ
-          example: signUp is developing now
-        echoQuery:
-          type: string
-          description: クエリのエコー
-          example: sample query
-        timestamp:
-          type: string
-          format: date-time
-          description: レスポンスタイムスタンプ
-          example: '2023-07-01T12:00:00Z'
-    loginResponse:
-      type: object
-      required:
-        - simpleMessage
-        - echoQuery
-        - timestamp
-      properties:
-        simpleMessage:
-          type: string
-          description: シンプルなメッセージ
-          example: signUp is developing now
-        echoQuery:
-          type: string
-          description: クエリのエコー
-          example: sample query
-        timestamp:
-          type: string
-          format: date-time
-          description: レスポンスタイムスタンプ
-          example: '2023-07-01T12:00:00Z'
-    logoutResponse:
-      type: object
-      required:
-        - simpleMessage
-        - echoQuery
-        - timestamp
-      properties:
-        simpleMessage:
-          type: string
-          description: シンプルなメッセージ
-          example: signUp is developing now
-        echoQuery:
-          type: string
-          description: クエリのエコー
-          example: sample query
-        timestamp:
-          type: string
-          format: date-time
-          description: レスポンスタイムスタンプ
-          example: '2023-07-01T12:00:00Z'
-    getUserIdListResponse:
-      type: object
-      required:
-        - userIdList
-      properties:
-        userIdList:
-          type: array
-          items:
-            type: integer
-          description: ユーザーID
-          example:
-            - 1
-            - 2
-            - 3
-        total:
-          type: integer
-          description: 合計ユーザー数
-          example: 12
-    getUserNameListResponse:
-      type: object
-      required:
-        - userNameList
-      properties:
-        userNameList:
-          type: array
-          items:
-            type: string
-          description: ユーザー名リスト
-          example:
-            - user1
-            - user2
-            - user3
-        total:
-          type: integer
-          description: 合計ユーザー数
-          example: 12
-  parameters:
-    checkRootRequest:
-      name: sampleQuery
-      in: query
-      description: サンプルクエリ
-      required: false
-      schema:
-        type: string
-        example: sample query
-    signUpRequest:
-      name: sampleQuery
-      in: query
-      description: サンプルクエリ
-      required: false
-      schema:
-        type: string
-        example: sample query
-    loginRequest:
-      name: sampleQuery
-      in: query
-      description: サンプルクエリ
-      required: false
-      schema:
-        type: string
-        example: sample query
-    logoutRequest:
-      name: sampleQuery
-      in: query
-      description: サンプルクエリ
-      required: false
-      schema:
-        type: string
-        example: sample query
-    getUserIdListRequest:
-      name: limit
-      in: query
-      description: 取得するユーザー数の上限
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 10
-        example: 20
-    getUserNameListRequest:
-      name: limit
-      in: query
-      description: 取得するユーザー数の上限
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 100
-        default: 10
-        example: 20
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabaseが提供するJWTトークンを使用した認証
   responses:
     BadRequest:
       description: リクエストの形式が不正です
@@ -508,3 +363,262 @@ components:
                 example: 内部サーバーエラーが発生しました
             required:
               - error
+  parameters:
+    checkRootRequest:
+      name: checkRootRequest
+      in: query
+      description: sampleのテスト用クエリ
+      required: false
+      schema:
+        type: object
+        properties:
+          sampleQuery:
+            type: string
+            description: サンプルクエリ
+    oauthGithubParameters:
+      name: oauthGithubParameters
+      in: query
+      description: GitHub OAuth認証のためのパラメータ
+      required: true
+      schema:
+        type: object
+        properties:
+          redirect_uri:
+            type: string
+            format: uri
+            description: 認証後のリダイレクト先URI
+    oauthGoogleParameters:
+      name: oauthGoogleParameters
+      in: query
+      description: Google OAuth認証のためのパラメータ
+      required: true
+      schema:
+        type: object
+        properties:
+          redirect_uri:
+            type: string
+            format: uri
+            description: 認証後のリダイレクト先URI
+    getUserIdListRequest:
+      name: getUserIdListRequest
+      in: query
+      description: ユーザーIDリスト取得のためのパラメータ
+      required: true
+      schema:
+        type: object
+        properties:
+          limit:
+            type: integer
+            description: 取得するユーザー数の上限
+    getUserNameListRequest:
+      name: getUserNameListRequest
+      in: query
+      description: ユーザー名リスト取得のためのパラメータ
+      required: true
+      schema:
+        type: object
+        properties:
+          limit:
+            type: integer
+            description: 取得するユーザー数の上限
+  schemas:
+    checkRootResponse:
+      type: object
+      required:
+        - simpleMessage
+        - echoQuery
+        - timestamp
+      properties:
+        simpleMessage:
+          type: string
+          description: シンプルなメッセージ
+          example: API is running correctly
+        echoQuery:
+          type: string
+          description: クエリのエコー
+          example: sample query
+        timestamp:
+          type: string
+          format: date-time
+          description: レスポンスタイムスタンプ
+          example: '2023-07-01T12:00:00Z'
+    signUpRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: ユーザーのメールアドレス
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: ユーザーのパスワード（8文字以上）
+        name:
+          type: string
+          description: ユーザーの表示名（オプション）
+    signUpResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Supabaseが生成したユーザーID
+            email:
+              type: string
+              format: email
+              description: ユーザーのメールアドレス
+            name:
+              type: string
+              description: ユーザーの表示名
+        session:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: JWTアクセストークン
+            refresh_token:
+              type: string
+              description: JWTリフレッシュトークン
+            expires_at:
+              type: integer
+              format: int64
+              description: トークンの有効期限（UNIXタイムスタンプ）
+    loginRequestBody:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: ユーザーのメールアドレス
+        password:
+          type: string
+          format: password
+          description: ユーザーのパスワード
+    loginResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Supabaseが生成したユーザーID
+            email:
+              type: string
+              format: email
+              description: ユーザーのメールアドレス
+            name:
+              type: string
+              description: ユーザーの表示名
+        session:
+          type: object
+          properties:
+            access_token:
+              type: string
+              description: JWTアクセストークン
+            refresh_token:
+              type: string
+              description: JWTリフレッシュトークン
+            expires_at:
+              type: integer
+              format: int64
+              description: トークンの有効期限（UNIXタイムスタンプ）
+    logoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: ログアウトに成功しました
+    refreshTokenRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+          description: リフレッシュトークン
+    refreshTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: 新しいJWTアクセストークン
+        refresh_token:
+          type: string
+          description: 新しいJWTリフレッシュトークン
+        expires_at:
+          type: integer
+          format: int64
+          description: トークンの有効期限（UNIXタイムスタンプ）
+    resetPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: パスワードをリセットするユーザーのメールアドレス
+    resetPasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: パスワードリセットメールを送信しました
+    oauthGithubResponse:
+      type: object
+      properties:
+        auth_url:
+          type: string
+          format: uri
+    oauthGoogleResponse:
+      type: object
+      properties:
+        auth_url:
+          type: string
+          format: uri
+    getUserIdListResponse:
+      type: object
+      required:
+        - userIdList
+      properties:
+        userIdList:
+          type: array
+          items:
+            type: integer
+          description: ユーザーID
+          example:
+            - 1
+            - 2
+            - 3
+        total:
+          type: integer
+          description: 合計ユーザー数
+          example: 12
+    getUserNameListResponse:
+      type: object
+      required:
+        - userNameList
+      properties:
+        userNameList:
+          type: array
+          items:
+            type: string
+          description: ユーザー名リスト
+          example:
+            - user1
+            - user2
+            - user3
+        total:
+          type: integer
+          description: 合計ユーザー数
+          example: 12

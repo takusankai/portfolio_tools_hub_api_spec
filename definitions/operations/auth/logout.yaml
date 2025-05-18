@@ -1,0 +1,6 @@
+logoutResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: "ログアウトに成功しました"

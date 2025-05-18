@@ -1,4 +1,4 @@
-.PHONY: bundle gen-go
+.PHONY: bundle gen-go gen-ts
 
 bundle:
 	redocly bundle definitions/main.yaml -o bundled.yaml

@@ -1,0 +1,19 @@
+oauthGoogleParameters:
+  name: oauthGoogleParameters
+  in: query
+  description: Google OAuth認証のためのパラメータ
+  required: true
+  schema:
+    type: object
+    properties:
+      redirect_uri:
+        type: string
+        format: uri
+        description: 認証後のリダイレクト先URI
+
+oauthGoogleResponse:
+  type: object
+  properties:
+    auth_url:
+      type: string
+      format: uri

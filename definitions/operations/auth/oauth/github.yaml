@@ -1,0 +1,19 @@
+oauthGithubParameters:
+  name: oauthGithubParameters
+  in: query
+  description: GitHub OAuth認証のためのパラメータ
+  required: true
+  schema:
+    type: object
+    properties:
+      redirect_uri:
+        type: string
+        format: uri
+        description: 認証後のリダイレクト先URI
+
+oauthGithubResponse:
+  type: object
+  properties:
+    auth_url:
+      type: string
+      format: uri
