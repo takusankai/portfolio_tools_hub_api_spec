@@ -1,12 +1,38 @@
+version: '3.8'
+
 services:
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: portfolio-o-tools-hub-swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./bundled.yaml:/app/bundled.yaml:ro
+    environment:
+      - SWAGGER_JSON=/app/bundled.yaml
+      - BASE_URL=/
+    restart: unless-stopped
+
   mock-server:
     image: stoplight/prism:4
     container_name: portfolio-tools-hub-mock
     ports:
-      - "8081:4010"
+      - "8082:4010"
     volumes:
       - ./bundled.yaml:/tmp/bundled.yaml:ro
     command: mock -h 0.0.0.0 /tmp/bundled.yaml
     environment:
       - PRISM_LOG_LEVEL=info
-    restart: unless-stopped 
+    restart: unless-stopped
+
+  mock-server-dynamic:
+    image: stoplight/prism:4
+    container_name: portfolio-tools-hub-mock-dynamic
+    ports:
+      - "8083:4010"
+    volumes:
+      - ./bundled.yaml:/tmp/bundled.yaml:ro
+    command: mock:dynamic -h 0.0.0.0 /tmp/bundled.yaml
+    environment:
+      - PRISM_LOG_LEVEL=info
+    restart: unless-stopped
