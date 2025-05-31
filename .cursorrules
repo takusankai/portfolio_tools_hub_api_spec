@@ -18,6 +18,7 @@
 
 ## 注意事項
 - wslを使用している場合あり、許可なくwindowsのコマンドを実行することは禁止
+- bundled.yamlを直接編集することは禁止、make bundleで自動生成する
 
 ## ファイル構成
 - definitions/ : OpenAPI仕様の分割ファイル

@@ -1,5 +1,9 @@
-.PHONY: bundle gen-go gen-ts up down logs logs-mock logs-swagger pr-install pr-mock pr-mock-dynamic pr-stop pr-validate pr-proxy
+.PHONY: red-install bundle valid gen-go gen-ts up down logs logs-mock logs-swagger pr-install pr-mock pr-mock-dynamic pr-stop pr-validate pr-proxy
+
 # OpenAPIスペックのバンドルコマンド
+red-install:
+	npm install -g @redocly/cli
+
 bundle:
 	redocly bundle definitions/main.yaml -o bundled.yaml
 
