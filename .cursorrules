@@ -1,0 +1,24 @@
+# Portfolio Tools Hub API Spec Rules
+
+## 言語設定
+- 常に日本語で回答してください
+
+## コーディング規約
+- OpenAPI 3.0.3仕様に準拠
+- YAML形式でインデントは2スペース
+- 日本語のコメントと説明を使用
+- エンドポイントには適切なタグを付与
+
+## 注意事項
+- wslを使用している場合あり、許可なくwindowsのコマンドを実行することは禁止
+
+## ファイル構成
+- definitions/ : OpenAPI仕様の分割ファイル
+- bundled.yaml : 統合されたOpenAPI仕様書
+- docker-compose.yaml : モックサーバー設定
+
+## 開発フロー
+1. definitions/内でスキーマを編集
+2. make bundleで統合
+3. make upでモックサーバー起動
+4. テスト実行 
