@@ -1,0 +1,12 @@
+services:
+  mock-server:
+    image: stoplight/prism:4
+    container_name: portfolio-tools-hub-mock
+    ports:
+      - "8081:4010"
+    volumes:
+      - ./bundled.yaml:/tmp/bundled.yaml:ro
+    command: mock -h 0.0.0.0 /tmp/bundled.yaml
+    environment:
+      - PRISM_LOG_LEVEL=info
+    restart: unless-stopped 
