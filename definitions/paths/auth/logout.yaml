@@ -1,19 +1,31 @@
 post:
   tags:
     - auth
-  summary: ログアウト
+  summary: ユーザーログアウト
   description: |
-    現在のセッションを終了し、ユーザーをログアウトします。
-    アクセストークンとリフレッシュトークンを無効化します。
+    現在のユーザーセッションを終了します。
+    scopeパラメータでローカルまたはグローバルログアウトを選択できます。
+  operationId: logoutUser
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema:
+          $ref: '../../operations/auth/logout.yaml#/LogoutRequest'
   responses:
     '200':
       description: ログアウト成功
       content:
         application/json:
           schema:
-            $ref: '../../operations/auth/logout.yaml#/logoutResponse'
+            $ref: '../../operations/auth/logout.yaml#/LogoutResponse'
+    '401':
+      description: 認証が必要
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
     '500':
-      description: 汎用 InternalServerError
       $ref: '../../main.yaml#/components/responses/InternalServerError'
   security:
     - bearerAuth: []

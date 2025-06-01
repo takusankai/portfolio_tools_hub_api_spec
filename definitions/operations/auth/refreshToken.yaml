@@ -1,22 +1,38 @@
-refreshTokenRequest:
+# リフレッシュトークンリクエストスキーマ
+RefreshTokenRequest:
   type: object
   required:
     - refresh_token
   properties:
     refresh_token:
       type: string
-      description: リフレッシュトークン
+      description: 有効なリフレッシュトークン
+      example: "v1.MjAyMy0wNy0wMVQxNTozMDowMFo..."
 
-refreshTokenResponse:
+# リフレッシュトークンレスポンススキーマ
+RefreshTokenResponse:
   type: object
   properties:
     access_token:
       type: string
       description: 新しいJWTアクセストークン
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
     refresh_token:
       type: string
-      description: 新しいJWTリフレッシュトークン
+      description: 新しいリフレッシュトークン
+      example: "v1.MjAyMy0wNy0wMVQxNjozMDowMFo..."
     expires_at:
       type: integer
       format: int64
-      description: トークンの有効期限（UNIXタイムスタンプ） 
+      description: トークンの有効期限（UNIXタイムスタンプ）
+      example: 1688230200
+    expires_in:
+      type: integer
+      description: トークンの有効期限（秒）
+      example: 3600
+    token_type:
+      type: string
+      description: トークンタイプ
+      example: "bearer"
+    user:
+      $ref: 'signUp.yaml#/SupabaseUser' 

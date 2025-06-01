@@ -1,19 +1,36 @@
-oauthGoogleParameters:
-  name: oauthGoogleParameters
-  in: query
-  description: Google OAuth認証のためのパラメータ
-  required: true
-  schema:
-    type: object
-    properties:
-      redirect_uri:
-        type: string
-        format: uri
-        description: 認証後のリダイレクト先URI
-
-oauthGoogleResponse:
-  type: object
-  properties:
-    auth_url:
+# Google OAuth URL取得用パラメータ
+GoogleOAuthUrlParameters:
+  - name: redirect_uri
+    in: query
+    required: true
+    description: 認証後のリダイレクト先URI
+    schema:
       type: string
       format: uri
+      example: "https://myapp.com/auth/callback"
+  - name: scopes
+    in: query
+    required: false
+    description: 要求するGoogleのスコープ（スペース区切り）
+    schema:
+      type: string
+      example: "openid email profile"
+  - name: state
+    in: query
+    required: false
+    description: CSRF攻撃を防ぐためのランダムな文字列
+    schema:
+      type: string
+      example: "random-state-string-123"
+  - name: access_type
+    in: query
+    required: false
+    description: アクセスタイプ（offline でリフレッシュトークンを取得）
+    schema:
+      type: string
+      enum: ["online", "offline"]
+      default: "online"
+      example: "offline"
+
+# Google OAuth用のスキーマは GitHub OAuth Operations と同じ構造を使用
+# OAuthUrlResponse, OAuthCallbackRequest, OAuthLoginResponse を参照

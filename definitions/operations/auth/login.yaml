@@ -1,4 +1,5 @@
-loginRequestBody:
+# ログインリクエストスキーマ
+LoginRequest:
   type: object
   required:
     - email
@@ -8,37 +9,60 @@ loginRequestBody:
       type: string
       format: email
       description: ユーザーのメールアドレス
+      example: "user@example.com"
     password:
       type: string
       format: password
       description: ユーザーのパスワード
+      example: "securePassword123"
+    options:
+      type: object
+      description: 追加オプション
+      properties:
+        captchaToken:
+          type: string
+          description: reCAPTCHAトークン
+          example: "03AGdBq25..."
 
-loginResponse:
+# ログインレスポンススキーマ
+LoginResponse:
   type: object
   properties:
     user:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Supabaseが生成したユーザーID
-        email:
-          type: string
-          format: email
-          description: ユーザーのメールアドレス
-        name:
-          type: string
-          description: ユーザーの表示名
+      $ref: 'signUp.yaml#/SupabaseUser'
     session:
+      $ref: 'signUp.yaml#/SupabaseSession'
+
+# 認証エラースキーマ
+AuthError:
+  type: object
+  properties:
+    error:
+      type: string
+      description: エラーコード
+      enum:
+        - "invalid_credentials"
+        - "email_not_confirmed"
+        - "too_many_requests"
+        - "validation_failed"
+        - "invalid_email"
+        - "weak_password"
+        - "user_already_exists"
+        - "user_not_found"
+        - "invalid_token"
+        - "missing_token"
+        - "invalid_grant"
+        - "invalid_request"
+        - "session_expired"
+        - "state_mismatch"
+        - "invalid_redirect_uri"
+        - "unauthorized_redirect_uri"
+      example: "invalid_credentials"
+    message:
+      type: string
+      description: エラーメッセージ
+      example: "メールアドレスまたはパスワードが正しくありません"
+    details:
       type: object
-      properties:
-        access_token:
-          type: string
-          description: JWTアクセストークン
-        refresh_token:
-          type: string
-          description: JWTリフレッシュトークン
-        expires_at:
-          type: integer
-          format: int64
-          description: トークンの有効期限（UNIXタイムスタンプ）
+      description: 追加のエラー詳細
+      nullable: true

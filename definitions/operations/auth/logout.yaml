@@ -1,6 +1,28 @@
-logoutResponse:
+# ログアウトリクエストスキーマ
+LogoutRequest:
+  type: object
+  properties:
+    scope:
+      type: string
+      enum:
+        - "local"
+        - "global"
+      default: "local"
+      description: "ログアウトスコープ（local: 現在のセッションのみ、global: 全セッション）"
+      example: "local"
+
+# ログアウトレスポンススキーマ
+LogoutResponse:
   type: object
   properties:
     message:
       type: string
+      description: "ログアウト成功メッセージ"
       example: "ログアウトに成功しました"
+    scope:
+      type: string
+      enum:
+        - "local"
+        - "global"
+      description: "実行されたログアウトスコープ"
+      example: "local"

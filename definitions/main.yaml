@@ -117,8 +117,21 @@ components:
             properties:
               error:
                 type: string
+                description: エラーコード
+                example: "internal_server_error"
+              message:
+                type: string
                 description: エラーメッセージ
                 example: "内部サーバーエラーが発生しました"
+              timestamp:
+                type: string
+                format: date-time
+                description: エラー発生日時
+                example: "2023-07-01T12:00:00Z"
+              request_id:
+                type: string
+                description: リクエストID（トレーシング用）
+                example: "req_123456789"
             required:
               - error
 

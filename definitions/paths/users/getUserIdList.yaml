@@ -2,32 +2,35 @@ get:
   tags:
     - users
   summary: ユーザーIDリスト取得
-  description: ユーザーIDリストを取得するエンドポイント
+  description: |
+    システムに登録されているユーザーのIDリストを取得します。
+    管理者権限が必要です。
   operationId: getUserIdList
   parameters:
     - $ref: '../../operations/users/getUserIdList.yaml#/getUserIdListRequest'
   responses:
     '200':
-      description: 正常応答
+      description: ユーザーIDリスト取得成功
       content:
         application/json:
           schema:
-            $ref: '../../operations/users/getUserIdList.yaml#/getUserIdListResponse'
+            $ref: '../../operations/users/getUserIdList.yaml#/UserIdListResponse'
     '400':
-      description: 汎用 BadRequest
-      $ref: '../../main.yaml#/components/responses/BadRequest'
+      description: リクエストエラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../main.yaml#/components/responses/BadRequest'
     '401':
-      description: 汎用 Unauthorized
       $ref: '../../main.yaml#/components/responses/Unauthorized'
     '403':
-      description: 汎用 Forbidden
       $ref: '../../main.yaml#/components/responses/Forbidden'
     '404':
-      description: 汎用 NotFound
       $ref: '../../main.yaml#/components/responses/NotFound'
     '500':
-      description: 汎用 InternalServerError
       $ref: '../../main.yaml#/components/responses/InternalServerError'
+  security:
+    - bearerAuth: []
 
   # summary: ユーザーIDリスト取得
   # description: ユーザーIDリストを取得するエンドポイント

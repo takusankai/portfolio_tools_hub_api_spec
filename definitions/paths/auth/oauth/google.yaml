@@ -5,16 +5,84 @@ get:
   description: |
     Google OAuth認証のためのリダイレクトURLを提供します。
     フロントエンドはこのURLにユーザーをリダイレクトし、Googleの認証画面を表示します。
+    認証成功後、指定されたリダイレクトURIにコールバックされます。
+  operationId: getGoogleOAuthUrl
   parameters:
-    - $ref: '../../../operations/auth/oauth/google.yaml#/oauthGoogleParameters'
+    - name: redirect_uri
+      in: query
+      required: true
+      description: 認証後のリダイレクト先URI
+      schema:
+        type: string
+        format: uri
+        example: "https://myapp.com/auth/callback"
+    - name: scopes
+      in: query
+      required: false
+      description: 要求するGoogleのスコープ（スペース区切り）
+      schema:
+        type: string
+        example: "openid email profile"
+    - name: state
+      in: query
+      required: false
+      description: CSRF攻撃を防ぐためのランダムな文字列
+      schema:
+        type: string
+        example: "random-state-string-123"
+    - name: access_type
+      in: query
+      required: false
+      description: アクセスタイプ（offline でリフレッシュトークンを取得）
+      schema:
+        type: string
+        enum: ["online", "offline"]
+        default: "online"
+        example: "offline"
   responses:
     '200':
       description: リダイレクト情報取得成功
       content:
         application/json:
           schema:
-            $ref: '../../../operations/auth/oauth/google.yaml#/oauthGoogleResponse'
+            $ref: '../../../operations/auth/oauth/github.yaml#/OAuthUrlResponse'
+    '400':
+      description: リクエストエラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../../operations/auth/login.yaml#/AuthError'
     '500':
-      description: 汎用 InternalServerError
+      $ref: '../../../main.yaml#/components/responses/InternalServerError'
+  security: []
+
+post:
+  tags:
+    - auth
+  summary: Google OAuth コールバック処理
+  description: |
+    GoogleからのOAuthコールバックを処理します。
+    認証コードをアクセストークンに交換し、ユーザー情報を取得します。
+  operationId: handleGoogleOAuthCallback
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../operations/auth/oauth/github.yaml#/OAuthCallbackRequest'
+  responses:
+    '200':
+      description: OAuth認証成功
+      content:
+        application/json:
+          schema:
+            $ref: '../../../operations/auth/oauth/github.yaml#/OAuthLoginResponse'
+    '400':
+      description: OAuth認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../../operations/auth/login.yaml#/AuthError'
+    '500':
       $ref: '../../../main.yaml#/components/responses/InternalServerError'
   security: []

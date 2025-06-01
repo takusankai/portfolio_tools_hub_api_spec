@@ -5,19 +5,39 @@ post:
   description: |
     リフレッシュトークンを使用して新しいアクセストークンを取得します。
     セッション有効期限の延長に使用します。
+    リフレッシュトークンも新しいものに更新されます。
+  operationId: refreshAccessToken
   requestBody:
+    required: true
     content:
       application/json:
         schema:
-          $ref: '../../operations/auth/refreshToken.yaml#/refreshTokenRequest'
+          $ref: '../../operations/auth/refreshToken.yaml#/RefreshTokenRequest'
   responses:
     '200':
       description: トークン更新成功
       content:
         application/json:
           schema:
-            $ref: '../../operations/auth/refreshToken.yaml#/refreshTokenResponse'
+            $ref: '../../operations/auth/refreshToken.yaml#/RefreshTokenResponse'
+    '400':
+      description: リフレッシュトークンエラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
+    '401':
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
+    '429':
+      description: レート制限
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
     '500':
-      description: 汎用 InternalServerError
       $ref: '../../main.yaml#/components/responses/InternalServerError'
   security: [] 

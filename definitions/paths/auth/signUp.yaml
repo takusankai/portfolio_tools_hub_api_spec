@@ -3,22 +3,28 @@ post:
     - auth
   summary: ユーザー登録
   description: |
-    新規ユーザーをSupabase認証サービスに登録します。
-    登録成功時にはユーザー情報とセッション情報を返します。
+    新しいユーザーアカウントを作成します。
+    メール確認が必要な場合は、確認メールが送信されます。
+  operationId: signUpUser
   requestBody:
     required: true
     content:
       application/json:
         schema:
-          $ref: '../../operations/auth/signUp.yaml#/signUpRequest'
+          $ref: '../../operations/auth/signUp.yaml#/SignUpRequest'
   responses:
-    '200':
-      description: 登録成功
+    '201':
+      description: ユーザー登録成功
       content:
         application/json:
           schema:
-            $ref: '../../operations/auth/signUp.yaml#/signUpResponse'
+            $ref: '../../operations/auth/signUp.yaml#/SignUpResponse'
+    '400':
+      description: 登録エラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
     '500':
-      description: 汎用 InternalServerError
       $ref: '../../main.yaml#/components/responses/InternalServerError'
   security: []

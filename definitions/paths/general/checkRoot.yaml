@@ -2,40 +2,24 @@ get:
   tags:
     - general
   summary: ルートエンドポイント
-  description: APIの起動を確認するためのエンドポイント
+  description: |
+    APIの基本情報を返します。
+    ヘルスチェックとしても使用できます。
   operationId: checkRoot
-  parameters:
-    - $ref: '../../operations/general/checkRoot.yaml#/checkRootRequest'
   responses:
     '200':
-      description: 正常応答
+      description: 成功
       content:
         application/json:
           schema:
             $ref: '../../operations/general/checkRoot.yaml#/checkRootResponse'
-          examples:
-            withQuery:
-              value:
-                simpleMessage: "API is running correctly"
-                echoQuery: "hello world"
-                timestamp: "2023-07-01T12:00:00Z"
-            withoutQuery:
-              value:
-                simpleMessage: "API is running correctly"
-                echoQuery: null
-                timestamp: "2023-07-01T12:00:00Z"
     '400':
-      description: 汎用 BadRequest
       $ref: '../../main.yaml#/components/responses/BadRequest'
     '401':
-      description: 汎用 Unauthorized
       $ref: '../../main.yaml#/components/responses/Unauthorized'
     '403':
-      description: 汎用 Forbidden
       $ref: '../../main.yaml#/components/responses/Forbidden'
     '404':
-      description: 汎用 NotFound
       $ref: '../../main.yaml#/components/responses/NotFound'
     '500':
-      description: 汎用 InternalServerError
       $ref: '../../main.yaml#/components/responses/InternalServerError'

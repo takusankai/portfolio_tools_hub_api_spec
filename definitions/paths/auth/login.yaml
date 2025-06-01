@@ -1,23 +1,42 @@
 post:
   tags:
     - auth
-  summary: ログイン
+  summary: ユーザーログイン
   description: |
-    登録済みユーザーのSupabase認証サービスへのログイン。
-    ログイン成功時にはユーザー情報とセッション情報を返します。
+    メールアドレスとパスワードでユーザーをログインします。
+    成功時にはアクセストークンとリフレッシュトークンを含むセッション情報を返します。
+  operationId: loginUser
   requestBody:
+    required: true
     content:
       application/json:
         schema:
-          $ref: '../../operations/auth/login.yaml#/loginRequestBody'
+          $ref: '../../operations/auth/login.yaml#/LoginRequest'
   responses:
     '200':
       description: ログイン成功
       content:
         application/json:
           schema:
-            $ref: '../../operations/auth/login.yaml#/loginResponse'
+            $ref: '../../operations/auth/login.yaml#/LoginResponse'
+    '400':
+      description: ログインエラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
+    '401':
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
+    '429':
+      description: レート制限
+      content:
+        application/json:
+          schema:
+            $ref: '../../operations/auth/login.yaml#/AuthError'
     '500':
-      description: 汎用 InternalServerError
       $ref: '../../main.yaml#/components/responses/InternalServerError'
   security: []

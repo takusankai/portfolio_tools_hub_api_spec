@@ -1,4 +1,5 @@
-signUpRequest:
+# サインアップリクエストスキーマ
+SignUpRequest:
   type: object
   required:
     - email
@@ -8,41 +9,223 @@ signUpRequest:
       type: string
       format: email
       description: ユーザーのメールアドレス
+      example: "user@example.com"
     password:
       type: string
       format: password
       minLength: 8
       description: ユーザーのパスワード（8文字以上）
-    name:
-      type: string
-      description: ユーザーの表示名（オプション）
+      example: "securePassword123"
+    options:
+      type: object
+      description: 追加オプション
+      properties:
+        data:
+          type: object
+          description: ユーザーメタデータ
+          properties:
+            full_name:
+              type: string
+              description: フルネーム
+              example: "山田太郎"
+            avatar_url:
+              type: string
+              format: uri
+              description: アバター画像URL
+              example: "https://example.com/avatar.jpg"
+            phone:
+              type: string
+              description: 電話番号
+              example: "+81-90-1234-5678"
+        emailRedirectTo:
+          type: string
+          format: uri
+          description: メール確認後のリダイレクト先URL
+          example: "https://myapp.com/welcome"
+        captchaToken:
+          type: string
+          description: reCAPTCHAトークン
+          example: "03AGdBq25..."
 
-signUpResponse:
+# サインアップレスポンススキーマ
+SignUpResponse:
   type: object
   properties:
     user:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Supabaseが生成したユーザーID
-        email:
-          type: string
-          format: email
-          description: ユーザーのメールアドレス
-        name:
-          type: string
-          description: ユーザーの表示名
+      $ref: '#/SupabaseUser'
     session:
+      oneOf:
+        - $ref: '#/SupabaseSession'
+        - type: "null"
+    message:
+      type: string
+      description: メール確認が必要な場合のメッセージ
+      example: "確認メールを送信しました。メールを確認してアカウントを有効化してください。"
+
+# Supabaseユーザーオブジェクト
+SupabaseUser:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: ユーザーの一意識別子
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    aud:
+      type: string
+      description: オーディエンス
+      example: "authenticated"
+    role:
+      type: string
+      description: ユーザーロール
+      example: "authenticated"
+    email:
+      type: string
+      format: email
+      description: メールアドレス
+      example: "user@example.com"
+    email_confirmed_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: メール確認日時
+      example: "2023-07-01T12:00:00Z"
+    phone:
+      type: string
+      nullable: true
+      description: 電話番号
+      example: "+81-90-1234-5678"
+    phone_confirmed_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: 電話番号確認日時
+      example: "2023-07-01T12:00:00Z"
+    confirmed_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: アカウント確認日時
+      example: "2023-07-01T12:00:00Z"
+    last_sign_in_at:
+      type: string
+      format: date-time
+      nullable: true
+      description: 最終ログイン日時
+      example: "2023-07-01T15:30:00Z"
+    app_metadata:
       type: object
+      description: アプリケーションメタデータ
       properties:
-        access_token:
+        provider:
           type: string
-          description: JWTアクセストークン
-        refresh_token:
+          description: 認証プロバイダー
+          example: "email"
+        providers:
+          type: array
+          items:
+            type: string
+          description: 使用可能な認証プロバイダー一覧
+          example: ["email"]
+    user_metadata:
+      type: object
+      description: ユーザーメタデータ
+      properties:
+        full_name:
           type: string
-          description: JWTリフレッシュトークン
-        expires_at:
-          type: integer
-          format: int64
-          description: トークンの有効期限（UNIXタイムスタンプ）
+          description: フルネーム
+          example: "山田太郎"
+        avatar_url:
+          type: string
+          format: uri
+          description: アバター画像URL
+          example: "https://example.com/avatar.jpg"
+    identities:
+      type: array
+      description: アイデンティティ情報
+      items:
+        $ref: '#/SupabaseIdentity'
+    created_at:
+      type: string
+      format: date-time
+      description: アカウント作成日時
+      example: "2023-07-01T12:00:00Z"
+    updated_at:
+      type: string
+      format: date-time
+      description: アカウント更新日時
+      example: "2023-07-01T12:00:00Z"
+
+# Supabaseセッションオブジェクト
+SupabaseSession:
+  type: object
+  properties:
+    access_token:
+      type: string
+      description: JWTアクセストークン
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    refresh_token:
+      type: string
+      description: リフレッシュトークン
+      example: "v1.MjAyMy0wNy0wMVQxMjowMDowMFo..."
+    expires_at:
+      type: integer
+      format: int64
+      description: トークンの有効期限（UNIXタイムスタンプ）
+      example: 1688212800
+    expires_in:
+      type: integer
+      description: トークンの有効期限（秒）
+      example: 3600
+    token_type:
+      type: string
+      description: トークンタイプ
+      example: "bearer"
+    user:
+      $ref: '#/SupabaseUser'
+    provider_token:
+      type: string
+      nullable: true
+      description: プロバイダーのアクセストークン（OAuth時）
+      example: "gho_github_access_token_123"
+    provider_refresh_token:
+      type: string
+      nullable: true
+      description: プロバイダーのリフレッシュトークン（OAuth時）
+      example: "ghr_github_refresh_token_123"
+
+# Supabaseアイデンティティオブジェクト
+SupabaseIdentity:
+  type: object
+  properties:
+    id:
+      type: string
+      description: アイデンティティID
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    user_id:
+      type: string
+      format: uuid
+      description: ユーザーID
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    identity_data:
+      type: object
+      description: アイデンティティデータ
+    provider:
+      type: string
+      description: プロバイダー名
+      example: "email"
+    last_sign_in_at:
+      type: string
+      format: date-time
+      description: 最終ログイン日時
+      example: "2023-07-01T15:30:00Z"
+    created_at:
+      type: string
+      format: date-time
+      description: 作成日時
+      example: "2023-07-01T12:00:00Z"
+    updated_at:
+      type: string
+      format: date-time
+      description: 更新日時
+      example: "2023-07-01T12:00:00Z"

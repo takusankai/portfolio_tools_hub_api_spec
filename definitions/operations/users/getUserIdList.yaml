@@ -10,7 +10,7 @@ getUserIdListRequest:
         type: integer
         description: 取得するユーザー数の上限
 
-getUserIdListResponse:
+UserIdListResponse:
   type: object
   required:
     - userIdList

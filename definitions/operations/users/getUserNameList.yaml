@@ -10,7 +10,7 @@ getUserNameListRequest:
         type: integer
         description: 取得するユーザー数の上限
 
-getUserNameListResponse:
+UserNameListResponse:
   type: object
   required:
     - userNameList

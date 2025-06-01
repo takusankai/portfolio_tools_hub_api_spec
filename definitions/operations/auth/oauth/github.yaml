@@ -1,19 +1,141 @@
-oauthGithubParameters:
-  name: oauthGithubParameters
-  in: query
-  description: GitHub OAuth認証のためのパラメータ
-  required: true
-  schema:
-    type: object
-    properties:
-      redirect_uri:
-        type: string
-        format: uri
-        description: 認証後のリダイレクト先URI
-
-oauthGithubResponse:
-  type: object
-  properties:
-    auth_url:
+# GitHub OAuth URL取得用パラメータ
+GitHubOAuthUrlParameters:
+  - name: redirect_uri
+    in: query
+    required: true
+    description: 認証後のリダイレクト先URI
+    schema:
       type: string
       format: uri
+      example: "https://myapp.com/auth/callback"
+  - name: scopes
+    in: query
+    required: false
+    description: 要求するGitHubのスコープ（カンマ区切り）
+    schema:
+      type: string
+      example: "user:email,read:user"
+  - name: state
+    in: query
+    required: false
+    description: CSRF攻撃を防ぐためのランダムな文字列
+    schema:
+      type: string
+      example: "random-state-string-123"
+
+# OAuth URL レスポンススキーマ
+OAuthUrlResponse:
+  type: object
+  properties:
+    url:
+      type: string
+      format: uri
+      description: OAuth認証用のリダイレクトURL
+      example: "https://github.com/login/oauth/authorize?client_id=your_client_id&redirect_uri=https%3A%2F%2Fmyapp.com%2Fauth%2Fcallback&scope=user%3Aemail%2Cread%3Auser&state=random-state-string-123"
+    provider:
+      type: string
+      description: OAuth プロバイダー名
+      example: "github"
+    state:
+      type: string
+      description: CSRF攻撃防止用のstate値
+      example: "random-state-string-123"
+
+# OAuth コールバックリクエストスキーマ
+OAuthCallbackRequest:
+  type: object
+  required:
+    - code
+  properties:
+    code:
+      type: string
+      description: OAuth認証コード
+      example: "github_auth_code_123"
+    state:
+      type: string
+      description: CSRF攻撃防止用のstate値
+      example: "random-state-string-123"
+    error:
+      type: string
+      description: OAuth認証エラーコード（エラー時のみ）
+      example: "access_denied"
+    error_description:
+      type: string
+      description: OAuth認証エラーの詳細説明（エラー時のみ）
+      example: "The user denied the request"
+
+# OAuth ログインレスポンススキーマ
+OAuthLoginResponse:
+  type: object
+  properties:
+    user:
+      allOf:
+        - $ref: '../signUp.yaml#/SupabaseUser'
+        - type: object
+          properties:
+            email_verified:
+              type: boolean
+              description: メールアドレスが確認済みかどうか
+              example: true
+            user_metadata:
+              type: object
+              description: プロバイダー固有のユーザーメタデータ
+              properties:
+                avatar_url:
+                  type: string
+                  format: uri
+                  description: アバター画像URL
+                  example: "https://avatars.githubusercontent.com/u/123456"
+                full_name:
+                  type: string
+                  description: フルネーム
+                  example: "GitHub User"
+                provider_id:
+                  type: string
+                  description: プロバイダー内でのユーザーID
+                  example: "123456"
+                username:
+                  type: string
+                  description: プロバイダー内でのユーザー名
+                  example: "githubuser"
+                picture:
+                  type: string
+                  format: uri
+                  description: プロフィール画像URL（Google用）
+                  example: "https://lh3.googleusercontent.com/a/default-user"
+                given_name:
+                  type: string
+                  description: 名（Google用）
+                  example: "Google"
+                family_name:
+                  type: string
+                  description: 姓（Google用）
+                  example: "User"
+            app_metadata:
+              type: object
+              description: アプリケーションメタデータ
+              properties:
+                provider:
+                  type: string
+                  description: 認証プロバイダー
+                  example: "github"
+                providers:
+                  type: array
+                  items:
+                    type: string
+                  description: 使用可能な認証プロバイダー一覧
+                  example: ["github"]
+    session:
+      allOf:
+        - $ref: '../signUp.yaml#/SupabaseSession'
+        - type: object
+          properties:
+            provider_token:
+              type: string
+              description: プロバイダーのアクセストークン
+              example: "gho_github_access_token_123"
+            provider_refresh_token:
+              type: string
+              nullable: true
+              description: プロバイダーのリフレッシュトークン
+              example: "ghr_github_refresh_token_123"
