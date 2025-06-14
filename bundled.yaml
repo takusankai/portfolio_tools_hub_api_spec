@@ -415,11 +415,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserIdListResponse'
         '400':
-          description: リクエストエラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -449,11 +445,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserNameListResponse'
         '400':
-          description: リクエストエラー
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -798,9 +790,9 @@ components:
         user:
           $ref: '#/components/schemas/SupabaseUser'
         session:
-          oneOf:
+          allOf:
             - $ref: '#/components/schemas/SupabaseSession'
-            - type: 'null'
+          nullable: true
         message:
           type: string
           description: メール確認が必要な場合のメッセージ
@@ -1098,30 +1090,6 @@ components:
           type: integer
           description: 合計ユーザー数
           example: 12
-    BadRequest:
-      description: リクエストの形式が不正です
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              error:
-                type: string
-                description: エラーメッセージ
-              details:
-                type: array
-                description: バリデーションエラーの詳細
-                items:
-                  type: object
-                  properties:
-                    field:
-                      type: string
-                      description: エラーのあるフィールド名
-                    message:
-                      type: string
-                      description: 具体的なエラー内容
-            required:
-              - error
     UserNameListResponse:
       type: object
       required:

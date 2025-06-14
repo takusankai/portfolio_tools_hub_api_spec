@@ -54,9 +54,9 @@ SignUpResponse:
     user:
       $ref: '#/SupabaseUser'
     session:
-      oneOf:
+      allOf:
         - $ref: '#/SupabaseSession'
-        - type: "null"
+      nullable: true
     message:
       type: string
       description: メール確認が必要な場合のメッセージ

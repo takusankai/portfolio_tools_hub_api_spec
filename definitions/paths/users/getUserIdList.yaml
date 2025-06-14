@@ -16,11 +16,7 @@ get:
           schema:
             $ref: '../../operations/users/getUserIdList.yaml#/UserIdListResponse'
     '400':
-      description: リクエストエラー
-      content:
-        application/json:
-          schema:
-            $ref: '../../main.yaml#/components/responses/BadRequest'
+      $ref: '../../main.yaml#/components/responses/BadRequest'
     '401':
       $ref: '../../main.yaml#/components/responses/Unauthorized'
     '403':
